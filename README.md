@@ -195,6 +195,56 @@ helm install monitoring prometheus-community/kube-prometheus-stack
 
 ---
 
+# 7️⃣ Verify Metrics in Prometheus
+
+---
+
+## Port Forward
+
+```bash
+kubectl port-forward svc/monitoring-kube-prometheus-prometheus 9090:9090
+```
+
+Open:
+
+👉 [http://localhost:9090](http://localhost:9090)
+
+---
+
+## Test Query
+
+```promql
+http_request_duration_seconds_bucket
+```
+
+---
+
+# 8️⃣ Install Ollama
+
+Download:
+
+👉 [https://ollama.com](https://ollama.com)
+
+---
+
+## Pull Llama3
+
+```bash
+ollama pull llama3
+```
+
+---
+
+## Start Ollama Server
+
+```bash
+ollama serve
+```
+
+---
+
+
+
 ## Verify Pods
 
 ```bash
@@ -249,55 +299,7 @@ kubectl apply -f k8s/servicemonitor.yaml
 
 ---
 
-# 7️⃣ Verify Metrics in Prometheus
-
----
-
-## Port Forward
-
-```bash
-kubectl port-forward svc/monitoring-kube-prometheus-prometheus 9090:9090
-```
-
-Open:
-
-👉 [http://localhost:9090](http://localhost:9090)
-
----
-
-## Test Query
-
-```promql
-http_request_duration_seconds_bucket
-```
-
----
-
-# 8️⃣ Install Ollama
-
-Download:
-
-👉 [https://ollama.com](https://ollama.com)
-
----
-
-## Pull Llama3
-
-```bash
-ollama pull llama3
-```
-
----
-
-## Start Ollama Server
-
-```bash
-ollama serve
-```
-
----
-
-# 1️⃣2️⃣ Verify Pods
+# Verify Pod
 
 ```bash
 kubectl get pods -n prod
@@ -307,78 +309,14 @@ kubectl get pods -n prod
 
 # 🚀 Run the Demo
 
----
-
-# 🔥 Generate Load
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip3 install kubernetes requests
+```
 
 ```bash
-kubectl run load -n prod --rm -it --image=curlimages/curl -- sh
-```
-
-Inside container:
-
-```bash
-while true; do
-  for i in $(seq 1 200); do
-    curl -s http://latency-app/delay/1 > /dev/null &
-  done
-  wait
-done
-```
-
----
-
-# 📊 Access Grafana
-
-```bash
-kubectl port-forward svc/monitoring-grafana 3000:80
-```
-
-Open:
-
-👉 [http://localhost:3000](http://localhost:3000)
-
-Login:
-
-```text
-admin / prom-operator
-```
-
----
-
-# 📈 Grafana Queries
-
----
-
-# 🔹 P95 Latency
-
-```promql
-histogram_quantile(
-  0.95,
-  sum(rate(http_request_duration_seconds_bucket{namespace="prod", pod=~"latency-app-.*"}[1m])) by (le)
-)
-```
-
----
-
-# 🔹 Running Pod Count
-
-```promql
-count(kube_pod_status_phase{
-  namespace="prod",
-  phase="Running",
-  pod=~"latency-app-.*"
-})
-```
-
----
-
-# 🤖 AI Agent Output
-
-Check logs:
-
-```bash
-kubectl logs -f deployment/root-cause-agent -n prod
+python3 agent.py
 ```
 
 ---
@@ -394,16 +332,6 @@ SUGGESTED_ACTION:
 Check PostgreSQL connectivity or increase connection pool size
 ```
 
----
-
-# 🧪 Demo Scenarios
-
-| Scenario        | Expected RCA        |
-| --------------- | ------------------- |
-| DB timeout logs | Database bottleneck |
-| High CPU usage  | CPU bottleneck      |
-| Probe failures  | Bad deployment      |
-| OOMKilled pods  | Memory pressure     |
 
 ---
 
