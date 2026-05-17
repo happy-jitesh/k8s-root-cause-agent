@@ -99,6 +99,12 @@ LOGS:
             # Step 6 - AI Analysis
             print("\n🤖 Sending data to Llama3 for root cause analysis...\n")
 
+            print("\n📄 LOG SAMPLE:\n")
+            print(logs[:1000])
+
+            print("\n⚡ EVENT SAMPLE:\n")
+            print(events[:1000])
+            
             result = analyze(context, PROMPT)
 
             # Step 7 - Output

@@ -2,12 +2,18 @@ from kubernetes import client, config
 
 try:
     config.load_incluster_config()
-    print("Using in-cluster config")
 except:
     config.load_kube_config()
-    print("Using local kubeconfig")
 
 v1 = client.CoreV1Api()
+
+
+IGNORE_EVENTS = [
+    "Pulled",
+    "Created",
+    "Started",
+    "Scheduled"
+]
 
 
 def get_events(namespace):
@@ -17,8 +23,12 @@ def get_events(namespace):
     output = []
 
     for e in events.items:
+
+        if e.reason in IGNORE_EVENTS:
+            continue
+
         output.append(
             f"{e.reason} - {e.message}"
         )
 
-    return "\n".join(output[-20:])
+    return "\n".join(output[-10:])
