@@ -15,6 +15,18 @@ spec:
     spec:
       containers:
       - name: app
-        image: ghcr.io/stefanprodan/podinfo:6.3.6
-        ports:
-        - containerPort: 9898
+        image: busybox
+        command:
+        - /bin/sh
+        - -c
+        - |
+          while true; do
+            echo "INFO: Application healthy"
+            sleep 5
+
+            echo "ERROR: Database connection timeout after 30 seconds"
+            echo "ERROR: Unable to connect to PostgreSQL database"
+            echo "ERROR: JDBC connection pool exhausted"
+
+            sleep 5
+          done
