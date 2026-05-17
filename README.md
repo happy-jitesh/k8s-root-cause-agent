@@ -133,13 +133,11 @@ root-cause-agent/
 │   └── root_cause_prompt.txt
 │
 ├── k8s/
-│   ├── app.yaml
-│   ├── service.yaml
-│   ├── servicemonitor.yaml
-│   ├── agent.yaml
-│   └── rbac.yaml
-│
-└── Dockerfile
+    ├── app.yaml
+    ├── app-dberr-inject.yaml
+    ├── service.yaml
+    ├── servicemonitor.yaml
+
 ```
 
 ---
@@ -221,8 +219,16 @@ This app continuously generates database timeout logs for RCA demo.
 
 ## Apply App
 
+Without Injecting Error
+
 ```bash
 kubectl apply -f k8s/app.yaml
+```
+
+With Injecting Error
+
+```bash
+kubectl apply -f k8s/app-dberr-inject.yaml
 ```
 
 ---
@@ -287,42 +293,6 @@ ollama pull llama3
 
 ```bash
 ollama serve
-```
-
----
-
-# 9️⃣ Build AI Agent Docker Image
-
----
-
-## Use Minikube Docker
-
-```bash
-eval $(minikube docker-env)
-```
-
----
-
-## Build Image
-
-```bash
-docker build -t root-cause-agent:latest .
-```
-
----
-
-# 🔟 Apply RBAC Permissions
-
-```bash
-kubectl apply -f k8s/rbac.yaml
-```
-
----
-
-# 1️⃣1️⃣ Deploy AI Agent
-
-```bash
-kubectl apply -f k8s/agent.yaml
 ```
 
 ---
@@ -444,33 +414,6 @@ Check PostgreSQL connectivity or increase connection pool size
 * AI reasoning improves incident investigation
 * Observability + AI = Autonomous SRE systems
 
----
-
-# 🔐 RBAC Permissions
-
-The AI agent requires access to:
-
-* Pods
-* Pod logs
-* Events
-
-RBAC is configured in:
-
-```text
-k8s/rbac.yaml
-```
-
----
-
-# 🚀 Future Enhancements
-
-* Auto-remediation
-* Slack alerts
-* Multi-agent collaboration
-* Incident memory
-* Vector database integration
-* Deployment rollback
-* Multi-cluster support
 
 ---
 

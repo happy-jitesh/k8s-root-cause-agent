@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: latency-app
+  namespace: prod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: latency-app
+  template:
+    metadata:
+      labels:
+        app: latency-app
+    spec:
+      containers:
+      - name: app
+        image: busybox
+        command:
+        - /bin/sh
+        - -c
+        - |
+          while true; do
+            echo "INFO: Application healthy"
+            sleep 5
+
+            echo "ERROR: Database connection timeout after 30 seconds"
+            echo "ERROR: Unable to connect to PostgreSQL database"
+            echo "ERROR: JDBC connection pool exhausted"
+
+            sleep 5
+          done
